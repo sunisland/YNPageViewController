@@ -41,12 +41,13 @@
         _pageScrollEnabled = YES;
         
         _headerViewCouldScale = NO;
+        _followScroll = YES;
         
         _lineColor = [UIColor redColor];
         _converColor = [UIColor groupTableViewBackgroundColor];
         _addButtonBackgroundColor = [UIColor whiteColor];
         _bottomLineBgColor = [UIColor greenColor];
-        _scrollViewBackgroundColor = [UIColor whiteColor];
+        _menuViewBgColor = [UIColor whiteColor];
         _normalItemColor = [UIColor grayColor];
         _selectedItemColor = [UIColor greenColor];
         _lineHeight = 2;
@@ -64,6 +65,8 @@
         _lineLeftAndRightAddWidth = 0;
         
         _bottomLineHeight = 2;
+     
+        _insertBottomSafe = YES;
     }
     return self;
 }

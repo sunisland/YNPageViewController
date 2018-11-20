@@ -62,6 +62,11 @@
         didAddButtonAction:(UIButton *)button;
 
 
+/**
+  菜单栏上按钮被点击了
+ 
+ */
+- (void)pageViewController:(YNPageViewController *)pageViewController didMenuBtnClick:(UIButton *)button index:(NSInteger)index;
 @end
 
 @protocol YNPageViewControllerDataSource <NSObject>

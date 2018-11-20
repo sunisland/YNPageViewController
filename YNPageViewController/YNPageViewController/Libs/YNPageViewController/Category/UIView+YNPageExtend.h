@@ -10,13 +10,17 @@
 
 #define kYNPAGE_SCREEN_WIDTH ([UIScreen mainScreen].bounds.size.width)
 
-#define kYNPAGE_SCREEN_HEIGHT ([UIScreen mainScreen].bounds.size.height)
+#define kYNPAGE_SCREEN_HEIGHT ([UIScreen mainScreen].bounds.size.height )
 
 #define kYNPAGE_IS_IPHONE_X  ((kYNPAGE_SCREEN_HEIGHT == 812.0f && kYNPAGE_SCREEN_WIDTH == 375.0f) ? YES : NO)
 
-#define kYNPAGE_NAVHEIGHT (kYNPAGE_IS_IPHONE_X ? 88 : 64)
+#define kYNPAGE_IS_AlMOST_FULL (([UIScreen mainScreen].bounds.size.height == 812 || [UIScreen mainScreen].bounds.size.height == 896) ? YES : NO)
 
-#define kYNPAGE_TABBARHEIGHT (kYNPAGE_IS_IPHONE_X ? 83 : 49)
+#define kYNPAGE_NAVHEIGHT (kYNPAGE_IS_AlMOST_FULL ? 88 : 64)
+
+#define kYNPAGE_TABBARHEIGHT (kYNPAGE_IS_AlMOST_FULL ? 83 : 49)
+
+#define KYNPAGE_SAFABOTTOM (kYNPAGE_IS_AlMOST_FULL ? 34 : 0) // 标记底部安全区域
 
 #define kLESS_THAN_iOS11 ([[UIDevice currentDevice].systemVersion floatValue] < 11.0 ? YES : NO)
 

@@ -176,7 +176,11 @@
     [self.displayDictM setObject:viewController forKey:[self getKeyWithTitle:title]];
     
     UIScrollView *scrollView = self.currentScrollView;
-    scrollView.frame = viewController.view.bounds;
+    CGRect scrollViewFrame = viewController.view.bounds;
+    if (self.config.insertBottomSafe) {
+         scrollViewFrame.size.height -= KYNPAGE_SAFABOTTOM;
+    }
+    scrollView.frame =  scrollViewFrame; //viewController.view.bounds;
     
     [viewController didMoveToParentViewController:self];
     
@@ -216,10 +220,13 @@
                     }
                 }
             } else {
+                
                 CGFloat scrollMenuViewDeltaY = _scrollMenuViewOriginY - scrollMenuViewY;
-                    scrollMenuViewDeltaY = -_insetTop +  scrollMenuViewDeltaY;
-                    /// 求出偏移了多少 未悬浮 (多个ScrollView偏移量联动)
+                scrollMenuViewDeltaY = -_insetTop +  scrollMenuViewDeltaY;
+                /// 求出偏移了多少 未悬浮 (多个ScrollView偏移量联动)
                 scrollView.contentOffset = CGPointMake(0, scrollMenuViewDeltaY);
+                
+                
             }
         }
     }
@@ -311,7 +318,6 @@
 
 #pragma mark - yn_pageScrollViewDidScrollView
 - (void)yn_pageScrollViewDidScrollView:(UIScrollView *)scrollView {
-    
     if ([self isSuspensionBottomStyle] || [self isSuspensionTopStyle]) {
         if (!_headerViewInTableView) return;
         
@@ -324,10 +330,14 @@
         }
         
         CGFloat offsetY = scrollView.contentOffset.y;
+       
         /// 悬浮临界点
+        BOOL tempSupenStatus = _supendStatus;
         if (offsetY > - self.scrollMenuView.yn_height - self.config.suspenOffsetY) {
             self.headerBgView.yn_y = -self.headerBgView.yn_height + offsetY + self.config.suspenOffsetY;
-            self.scrollMenuView.yn_y = offsetY + self.config.suspenOffsetY;
+            if (self.config.followScroll) {
+                self.scrollMenuView.yn_y = offsetY + self.config.suspenOffsetY;
+            }
             self.supendStatus = YES;
         } else {
             /// headerView往下拉置顶
@@ -340,6 +350,9 @@
             }
             self.scrollMenuView.yn_y = self.headerBgView.yn_bottom;
             self.supendStatus = NO;
+        }
+        if (tempSupenStatus != _supendStatus) {
+            [_scrollMenuView supendStatusDidChange:_supendStatus];
         }
         
         [self adjustSectionHeader:scrollView];
@@ -369,6 +382,15 @@
 - (void)pagescrollMenuViewItemOnClick:(UIButton *)label index:(NSInteger)index {
     
     [self setSelectedPageIndex:index];
+    [self sendPagescrollMenuViewItemOnClick:label index:index];
+}
+
+// 通知代理 菜单栏上按钮被点击了
+- (void)sendPagescrollMenuViewItemOnClick:(UIButton *)label index:(NSInteger)index{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(pageViewController:didMenuBtnClick:index:)]) {
+        [self.delegate pageViewController:self didMenuBtnClick:label index:index];
+    }
+
 }
 
 - (void)pagescrollMenuViewAddButtonAction:(UIButton *)button {
@@ -704,9 +726,7 @@
             self.scaleBackgroundView.userInteractionEnabled = NO;
         }
         self.config.tempTopHeight = self.headerBgView.yn_height + self.config.menuHeight;
-        
         _insetTop = self.headerBgView.yn_height + self.config.menuHeight;
-        
         _scrollMenuViewOriginY = _headerView.yn_height;
         
         if ([self isSuspensionTopPauseStyle]) {
@@ -934,6 +954,7 @@
 #pragma mark - Invoke Delegate Method
 /// 回调监听列表滚动代理
 - (void)invokeDelegateForScrollWithOffsetY:(CGFloat)offsetY {
+
     if (self.delegate && [self.delegate respondsToSelector:@selector(pageViewController:contentOffsetY:progress:)]) {
         switch (self.config.pageStyle) {
             case YNPageStyleSuspensionTop:

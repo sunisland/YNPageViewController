@@ -20,11 +20,16 @@
 /// 点击Add按钮
 - (void)pagescrollMenuViewAddButtonAction:(UIButton *)button;
 
+// 通知外部菜单栏item被选中, 无论是滑动选中, 还是点击选择
+- (void)sendPagescrollMenuViewItemOnClick:(UIButton *)label index:(NSInteger)index;
+
 @end
 
 @interface YNPageScrollMenuView : UIView
 /// + 按钮
 @property (nonatomic, strong) UIButton *addButton;
+/** 背景图片*/
+@property (nonatomic, strong) UIImageView *backgroundImage;
 
 /// 标题数组
 @property (nonatomic, strong) NSMutableArray *titles;
@@ -68,5 +73,9 @@
 
 /// 重新刷新(创建)
 - (void)reloadView;
+
+/**菜单栏的悬浮状态已经改变 */
+- (void)supendStatusDidChange:(BOOL)status;
+
 
 @end

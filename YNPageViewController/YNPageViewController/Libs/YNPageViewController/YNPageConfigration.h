@@ -59,6 +59,10 @@ typedef NS_ENUM(NSInteger, YNPageHeaderViewScaleMode) {
 /** headerView + menu height */
 @property (nonatomic, assign, readonly) CGFloat pageHeaderViewOriginHeight;
 
+
+/** 底部减去安全区域,是否全面屏底部距离 当界面可能出现在屏幕底部时使用 YES*/
+@property (nonatomic, assign) BOOL insertBottomSafe;
+
 #pragma mark - UIScrollMenuView Config
 /** 是否显示遮盖*/
 @property (nonatomic, assign) BOOL showConver;
@@ -74,6 +78,8 @@ typedef NS_ENUM(NSInteger, YNPageHeaderViewScaleMode) {
 @property (nonatomic, assign) BOOL scrollMenu;
 /** 菜单弹簧效果 NO */
 @property (nonatomic, assign) BOOL bounces;
+/** 滚动到屏幕顶部后是否跟随滚动 默认yes*/
+@property (nonatomic, assign) BOOL followScroll;
 /**
  *  是否是居中 (当所有的Item+margin的宽度小于ScrollView宽度)  默认 YES
  *  scrollMenu = NO,aligmentModeCenter = NO 会变成平分
@@ -94,7 +100,15 @@ typedef NS_ENUM(NSInteger, YNPageHeaderViewScaleMode) {
 /** 遮盖color */
 @property (nonatomic, strong) UIColor *converColor;
 /** 菜单背景color */
-@property (nonatomic, strong) UIColor *scrollViewBackgroundColor;
+@property (nonatomic, strong) UIColor *menuViewBgColor;
+/** 菜单背景图片 与scrollViewBackgroundColor 互斥, 优先使用 scrollViewBackgroundImage*/
+@property (nonatomic, strong) UIImage *menuViewBgImage;
+
+/** 菜单背景悬浮在顶部时的 背景颜色 和 menuViewSupendbBgImage 互斥, 优先使用 menuViewSupendbBgColor */
+@property (nonatomic, strong) UIColor *menuViewSupendbBgColor;
+/** 菜单背景悬浮在顶部时的 背景图, */
+@property (nonatomic, strong) UIImage *menuViewSupendbBgImage;
+
 /** 选项正常color */
 @property (nonatomic, strong) UIColor *normalItemColor;
 /** 选项选中color */

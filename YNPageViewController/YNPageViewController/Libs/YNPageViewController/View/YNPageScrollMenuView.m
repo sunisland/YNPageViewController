@@ -65,10 +65,54 @@
 }
 
 
+- (void)supendStatusDidChange:(BOOL)status{
+    if (!_configration.menuViewSupendbBgColor && !_configration.menuViewSupendbBgImage) {
+        // 只有正常的颜色, 不用修改
+        return;
+    }
+    
+    if (status == YES) {
+        // 悬浮
+        if (_configration.menuViewSupendbBgColor) {
+            _backgroundImage.hidden = YES;
+            self.backgroundColor = _configration.menuViewSupendbBgColor;
+            return;
+        }
+        if (_configration.menuViewSupendbBgImage) {
+            _backgroundImage.image = _configration.menuViewSupendbBgImage;
+            _backgroundImage.hidden = NO;
+            return;
+        }
+        return;
+    }else{
+        // 没有悬浮
+        if (_configration.menuViewBgColor) {
+            self.backgroundColor = self.configration.menuViewBgColor;
+            _backgroundImage.hidden = YES;
+            return;
+        }
+        if (_configration.menuViewBgImage) {
+            _backgroundImage.image = _configration.menuViewBgImage;
+            _backgroundImage.hidden = NO;
+            return;
+        }
+    }
+}
+
 #pragma mark - Private Method
 - (void)setupSubViews {
     
-    self.backgroundColor = self.configration.scrollViewBackgroundColor;
+    if (self.configration.menuViewBgColor) {
+         self.backgroundColor = self.configration.menuViewBgColor;
+    }
+    
+    self.backgroundImage = [[UIImageView alloc] init];
+    _backgroundImage.frame = self.bounds;
+    [self addSubview:_backgroundImage];
+    if (self.configration.menuViewBgImage) {
+        _backgroundImage.image = self.configration.menuViewBgImage;
+    }
+    
     
     [self setupItems];
     [self setupOtherViews];
@@ -162,9 +206,11 @@
         } else { /// 否则按原来样子
             /// 不能滚动则平分
             if (!self.configration.scrollMenu) {
+                //这个应该放在外面计算
+                CGFloat itemW = (self.scrollView.yn_width - self.configration.itemLeftAndRightMargin * 2) / self.itemsArrayM.count;
                 [self.itemsArrayM enumerateObjectsUsingBlock:^(UIButton  * button, NSUInteger idx, BOOL * _Nonnull stop) {
-                    itemW = self.scrollView.yn_width / self.itemsArrayM.count;
-                    itemX = itemW *idx;
+                    // 在计算X的时候应该把左右间距加上
+                    itemX = itemW *idx + self.configration.itemLeftAndRightMargin;
                     button.frame = CGRectMake(itemX, itemY, itemW, itemH);
                 }];
                 
@@ -230,9 +276,9 @@
     }
     
     /// 颜色
-  currentButton.selected = YES;
-//     [currentButton setTitleColor:self.configration.selectedItemColor forState:UIControlStateNormal];
+    currentButton.selected = YES;
     currentButton.titleLabel.font = self.configration.selectedItemFont;
+    [self sendClickItem:currentButton index:self.currentIndex];
     /// 线条
     if (self.configration.showScrollLine) {
         self.lineView.yn_x = currentButton.yn_x - self.configration.lineLeftAndRightAddWidth + self.configration.lineLeftAndRightMargin;
@@ -284,6 +330,7 @@
                // [currentButton setTitleColor:self.configration.selectedItemColor forState:UIControlStateNormal];
                currentButton.selected = YES;
                 currentButton.titleLabel.font = self.configration.selectedItemFont;
+                [self sendClickItem:currentButton index:self.currentIndex];
             }
         }];
         
@@ -390,6 +437,7 @@
 //             [lastButton setTitleColor:self.configration.normalItemColor forState:UIControlStateNormal];
 //             [currentButton setTitleColor:self.configration.selectedItemColor forState:UIControlStateNormal];
             currentButton.titleLabel.font = self.configration.selectedItemFont;
+            [self sendClickItem:currentButton index:self.currentIndex];
             
         } else if (progress < 0.5 && progress > 0){
           //  [lastButton setTitleColor:self.configration.selectedItemColor forState:UIControlStateNormal];
@@ -399,6 +447,7 @@
             currentButton.selected = NO;
            // [currentButton setTitleColor:self.configration.normalItemColor forState:UIControlStateNormal];
             currentButton.titleLabel.font = self.configration.itemFont;
+             [self sendClickItem:lastButton index:self.lastIndex];
             
         }
     }
@@ -465,6 +514,13 @@
     if (self.lastIndex == self.currentIndex) return;
     
     [self adjustItemAnimate:animated];
+}
+
+- (void)sendClickItem:(UIButton *)button index:(NSInteger)index{
+    if (_delegate && [_delegate respondsToSelector:@selector(sendPagescrollMenuViewItemOnClick:index:)]) {
+        [_delegate sendPagescrollMenuViewItemOnClick:button index:index];
+    }
+    
 }
 
 
