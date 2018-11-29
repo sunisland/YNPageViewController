@@ -13,7 +13,7 @@
 #import "UIScrollView+YNPageExtend.h"
 #import "YNPageHeaderScrollView.h"
 
-#define kDEFAULT_INSET_BOTTOM 400
+#define kDEFAULT_INSET_BOTTOM 0
 
 @interface YNPageViewController () <UIScrollViewDelegate, YNPageScrollMenuViewDelegate>
 
@@ -487,7 +487,7 @@
                                  controllers:(NSArray *)controllers
                                        index:(NSInteger)index {
     index = index < 0 ? 0 : index;
-    index = index > self.controllersM.count - 1 ? self.controllersM.count - 1 : index;
+    index = index > self.controllersM.count - 1 ? self.controllersM.count  : index;
     NSInteger tarIndex = index;
     BOOL insertSuccess = NO;
     if (titles.count == controllers.count && controllers.count > 0) {
